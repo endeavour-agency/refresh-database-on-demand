@@ -1,0 +1,43 @@
+services:
+  php-8.2:
+    build:
+      context: .
+      dockerfile: docker/php-8.2/Dockerfile
+    environment:
+      - COMPOSER_MEMORY_LIMIT=-1
+    depends_on:
+      postgres:
+        condition: service_healthy
+    volumes:
+      - ./src:/var/www/html/src
+      - ./tests:/var/www/html/tests
+      - ./composer.json:/var/www/html/composer.json
+      - ./phpunit.xml:/var/www/html/phpunit.xml
+      - ./testbench.yaml:/var/www/html/testbench.yaml
+
+  php-8.3:
+    extends:
+      service: php-8.2
+    build:
+      dockerfile: docker/php-8.3/Dockerfile
+
+  postgres:
+    image: postgres:14
+    restart: unless-stopped
+    ports:
+      - 54330:5432
+    environment:
+      - POSTGRES_USER=root
+      - POSTGRES_HOST_AUTH_METHOD=trust
+      - POSTGRES_DB=endeavour-agency
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready"]
+      interval: 1s
+      timeout: 5s
+      retries: 5
+
+  local:
+    extends:
+      service: php-8.3
+    volumes:
+      - .:/var/www/html

@@ -1,5 +1,5 @@
 {
-    "version": "0.1.0",
+    "version": "1.0.0",
     "name": "endeavour-agency/refresh-database-on-demand",
     "description": "This packages offers a drop-in replacement for Laravel's RefreshDatabase trait, which only refreshes the database when migrations have actually changed.",
     "type": "library",
